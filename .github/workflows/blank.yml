@@ -26,10 +26,11 @@ jobs:
           cd C:\v8
           fetch v8
           cd v8
+          ls
           gn gen out/x64.Release "--args=is_clang=true is_component_build=false v8_static_library=true use_custom_libcxx=false target_cpu=\"x64\"" 
           ninja -C out/x64.Release/
-          ls
-          cd ..
+          ls out
+          cd ../..
           ls
       - name: Package Library
         run: |
