@@ -34,9 +34,9 @@ jobs:
           ls
       - name: Package Library
         run: |
-          rm -r -Force C:\v8\v8\out.gn\x64.Release\obj
-          rm -r -Force C:\v8\v8\out.gn\x64.Release\gen
-          7z a v8_x64_release.7z C:\v8\v8\out.gn\x64.Release\
+          rm -r -Force C:\v8\v8\out\x64.Release\obj
+          rm -r -Force C:\v8\v8\out\x64.Release\gen
+          7z a v8_x64_release.7z C:\v8\v8\out\x64.Release\
       - uses: actions/upload-artifact@v3
         with:
           name: v8_x64_release
