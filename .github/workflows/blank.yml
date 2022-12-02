@@ -26,9 +26,8 @@ jobs:
           cd C:\v8
           fetch v8
           cd v8
-          gn gen out/x64.Release
-          gn gen out.gn/x64.Release "--args=is_clang=true is_component_build=false v8_static_library=true use_custom_libcxx=false target_cpu=\"x64\"" 
-          ninja -C out.gn/x64.Release/
+          gn gen out/x64.Release "--args=is_clang=true is_component_build=false v8_static_library=true use_custom_libcxx=false target_cpu=\"x64\"" 
+          ninja -C out/x64.Release/
           ls
           cd ..
           ls
