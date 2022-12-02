@@ -22,18 +22,21 @@ jobs:
           $Env:PATH = "C:\depot_tools;$Env:PATH"
           $Env:DEPOT_TOOLS_WIN_TOOLCHAIN = 0
           gclient
-          where.exe python
           mkdir C:\v8
           cd C:\v8
           fetch v8
           cd v8
-          python ./tools/dev/gm.py x64.release
+          # python ./tools/dev/gm.py x64.release
+          gn gen "--args=is_clang=true is_component_build=false v8_static_library=true use_custom_libcxx=false target_cpu=\"x64\"" out.gn/x64.Release
+          ninja -C out.gn/x64.Release/
           ls
           cd ..
           ls
       - name: Package Library
         run: |
-          7z a v8_x64_release.7z C:\v8\v8\out\x64.release
+          rm -r -Force C:\v8\v8\out.gn\x64.Release\obj
+          rm -r -Force C:\v8\v8\out.gn\x64.Release\gen
+          7z a v8_x64_release.7z C:\v8\v8\out.gn\x64.Release\
       - uses: actions/upload-artifact@v3
         with:
           name: v8_x64_release
