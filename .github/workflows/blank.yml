@@ -22,11 +22,12 @@ jobs:
           $Env:PATH = "C:\depot_tools;$Env:PATH"
           $Env:DEPOT_TOOLS_WIN_TOOLCHAIN = 0
           gclient
+          where.exe python
           mkdir C:\v8
           cd C:\v8
           fetch v8
           cd v8
-          python3 ./tools/dev/gm.py x64.release
+          python ./tools/dev/gm.py x64.release
           ls
           cd ..
           ls
