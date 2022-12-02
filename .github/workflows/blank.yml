@@ -28,13 +28,15 @@ jobs:
           cd v8
           ls
           gn gen out/x64.Release
-          "is_clang=true`nv8_monolithic = true`nis_component_build = false`nis_debug = false`ntarget_cpu = `"x64`"`nv8_use_external_startup_data = false`nv8_enable_i18n_support = false`nsymbol_level = 0`nv8_enable_fast_mksnapshot = true`nuse_custom_libcxx = false" | Out-File -FilePath out/x64.Release/args.gn
+          "is_clang=true`nv8_static_library=true`nv8_monolithic = true`nis_component_build = false`nis_debug = false`ntarget_cpu = `"x64`"`nsymbol_level = 0`nv8_enable_fast_mksnapshot = true`nuse_custom_libcxx = false`ndcheck_always_on = false" | Out-File -FilePath out/x64.Release/args.gn
           ninja -C out/x64.Release/
           ls out/x64.Release/
       - name: Package Library
         run: |
           rm -r -Force C:\v8\v8\out\x64.Release\obj
           rm -r -Force C:\v8\v8\out\x64.Release\gen
+          # 删除C:\v8\v8\out\x64.Release里所有pdb类型的文件
+          Get-ChildItem -Path C:\v8\v8\out\x64.Release -Filter *.pdb -Recurse | Remove-Item -Force
           7z a v8_x64_release.7z C:\v8\v8\out\x64.Release\
       - uses: actions/upload-artifact@v3
         with:
