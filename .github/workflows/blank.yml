@@ -1,0 +1,39 @@
+name: BuildV8
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  build:
+    name: V8 Test Build
+    runs-on: windows-2019
+    steps:
+      - name: Set Env
+        run: |
+          (new-object System.Net.WebClient).DownloadFile('https://storage.googleapis.com/chrome-infra/depot_tools.zip','depot_tools.zip')
+          7z x -aoa -oC:\depot_tools depot_tools.zip
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64
+          toolset: 14.2
+      - name: Build
+        run:
+          $Env:PATH = "C:\depot_tools;$Env:PATH"
+          gclient
+          mkdir C:\v8
+          cd C:\v8
+          fetch v8
+          cd v8
+          python3 ./tools/dev/gm.py x64.release
+          ls
+          cd ..
+          ls
+      - name: Package Library
+        run: |
+          7z a v8_x64_release.7z C:\v8\v8\out\x64.release
+      - uses: actions/upload-artifact@v3
+        with:
+          name: v8_x64_release
+          path: v8_x64_release.7z
+          
