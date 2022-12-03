@@ -27,7 +27,7 @@ jobs:
           fetch v8
           cd v8
           gn gen out/x64Release --args="v8_monolithic=true v8_use_external_startup_data=false v8_static_library=true is_debug=false target_cpu=\`"x64\`""
-          ninja -C out/x64Release v8
+          ninja -C out/x64Release v8_monolith
           # gn gen out/x64.Release --args='v8_monolithic=true v8_static_library=true is_debug=false target_cpu="x64"'
           # ninja -C out/x64.Release v8
           # gn gen out/foo
@@ -47,6 +47,7 @@ jobs:
           if (Test-Path C:\v8\v8\out\x64Release\gen) {
             rm -r -Force C:\v8\v8\out\x64Release\gen
           }
+          Get-ChildItem -Path C:\v8\v8\out\x64Release -Filter *.pdb -Recurse | Remove-Item -Force
           7z a v8_x64_release.7z C:\v8\v8\out\x64Release\
       - uses: actions/upload-artifact@v3
         with:
