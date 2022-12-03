@@ -28,7 +28,8 @@ jobs:
           cd v8
           ls
           gn gen out/x64.Release
-          "is_clang=true`nv8_static_library=true`nv8_monolithic = true`nis_component_build = false`nis_debug = false`ntarget_cpu = `"x64`"`nsymbol_level = 0`nv8_enable_fast_mksnapshot = true`nuse_custom_libcxx = false`ndcheck_always_on = false`nv8_use_external_startup_data = false`nv8_enable_i18n_support = false" | Out-File -FilePath out/x64.Release/args.gn
+          # "is_clang=true`nv8_static_library=true`nv8_monolithic = true`nis_component_build = false`nis_debug = false`ntarget_cpu = `"x64`"`nsymbol_level = 0`nv8_enable_fast_mksnapshot = true`nuse_custom_libcxx = false`ndcheck_always_on = false`nv8_use_external_startup_data = false`nv8_enable_i18n_support = false" | Out-File -FilePath out/x64.Release/args.gn
+          "is_clang=true`nis_component_build=false`nv8_static_library=true`nuse_custom_libcxx=false`ntarget_cpu=`"x64`"" | Out-File -FilePath out/x64.Release/args.gn
           ninja -C out/x64.Release/
           ls out/x64.Release/
       - name: Package Library
