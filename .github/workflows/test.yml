@@ -26,7 +26,7 @@ jobs:
           cd C:\v8
           fetch v8
           cd v8
-          gn gen out/x64Release --args="v8_monolithic=true v8_static_library=true is_debug=false target_cpu=`"x64`""
+          gn gen out/x64Release --args="v8_monolithic=true v8_static_library=true is_debug=false target_cpu=\`"x64\`""
           ninja -C out/x64Release v8
           # gn gen out/x64.Release --args='v8_monolithic=true v8_static_library=true is_debug=false target_cpu="x64"'
           # ninja -C out/x64.Release v8
