@@ -40,9 +40,14 @@ jobs:
           # ls
       - name: Package Library
         run: |
-          rm -r -Force C:\v8\v8\out\x64.Release\obj
-          rm -r -Force C:\v8\v8\out\x64.Release\gen
-          7z a v8_x64_release.7z C:\v8\v8\out\x64.Release\
+          #当C:\v8\v8\out\x64.Release\obj存在时，删除C:\v8\v8\out\x64.Release\obj
+          if (Test-Path C:\v8\v8\out\x64Release\obj) {
+            rm -r -Force C:\v8\v8\out\x64Release\obj
+          }
+          if (Test-Path C:\v8\v8\out\x64Release\gen) {
+            rm -r -Force C:\v8\v8\out\x64Release\gen
+          }
+          7z a v8_x64_release.7z C:\v8\v8\out\x64Release\
       - uses: actions/upload-artifact@v3
         with:
           name: v8_x64_release_test
