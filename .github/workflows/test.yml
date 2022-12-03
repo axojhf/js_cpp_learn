@@ -26,21 +26,23 @@ jobs:
           cd C:\v8
           fetch v8
           cd v8
-          gn gen out/foo
-          gn args out/foo --list
+          gn gen out/x64.Release --args='v8_monolithic=true v8_static_library=true is_debug=false target_cpu="x64"'
+          ninja -C out/x64.Release v8
+          # gn gen out/foo
+          # gn args out/foo --list
           # python ./tools/dev/gm.py x64.release
           # gn gen "--args=is_clang=true is_component_build=false v8_static_library=true use_custom_libcxx=false target_cpu=\"x64\"" out.gn/x64.Release
           # ninja -C out.gn/x64.Release/
           # ls
           # cd ..
           # ls
-      # - name: Package Library
-      #   run: |
-      #     rm -r -Force C:\v8\v8\out.gn\x64.Release\obj
-      #     rm -r -Force C:\v8\v8\out.gn\x64.Release\gen
-      #     7z a v8_x64_release.7z C:\v8\v8\out.gn\x64.Release\
-      # - uses: actions/upload-artifact@v3
-      #   with:
-      #     name: v8_x64_release
-      #     path: v8_x64_release.7z
+      - name: Package Library
+        run: |
+          rm -r -Force C:\v8\v8\out\x64.Release\obj
+          rm -r -Force C:\v8\v8\out\x64.Release\gen
+          7z a v8_x64_release.7z C:\v8\v8\out\x64.Release\
+      - uses: actions/upload-artifact@v3
+        with:
+          name: v8_x64_release_test
+          path: v8_x64_release.7z
           
