@@ -32,8 +32,8 @@ jobs:
           ls out/x64.Release/
       - name: Package Library
         run: |
-          rm -r -Force C:\v8\v8\out\x64.Release\obj
-          rm -r -Force C:\v8\v8\out\x64.Release\gen
+          # rm -r -Force C:\v8\v8\out\x64.Release\obj
+          # rm -r -Force C:\v8\v8\out\x64.Release\gen
           Get-ChildItem -Path C:\v8\v8\out\x64.Release -Filter *.pdb -Recurse | Remove-Item -Force
           7z a v8_x64_release.7z C:\v8\v8\out\x64.Release\
       - uses: actions/upload-artifact@v3
