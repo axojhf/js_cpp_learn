@@ -41,6 +41,7 @@ jobs:
           git clone --depth=1 https://github.com/bnoordhuis/v8-cmake.git
           cd v8-cmake
           cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DV8_MONOLITHIC=ON -DV8_USE_EXTERNAL_STARTUP_DATA=OFF -DV8_USE_CUSTOM_LIBCXX=OFF -DV8_TREAT_WARNINGS_AS_ERRORS=OFF -DV8_SYMBOL_LEVEL=0 -DV8_TARGET_ARCH=x64
+          cmake --build build --config Release
       - name: Package Library
         run: |
           7z a v8_monolith_MinGW_x64_release.7z C:\v8-cmake\build\
