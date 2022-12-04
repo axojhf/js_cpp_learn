@@ -56,7 +56,7 @@ jobs:
           cd C:\v8
           fetch v8
           cd C:\v8\v8
-          [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String("Z2NjX3Rvb2xjaGFpbigibWluZ3c2NCIpIHsKICAgIHRvb2xwcmVmaXggPSAiQzovbWluZ3c2NC9iaW4vIgogIAogICAgY2MgPSAiJHt0b29scHJlZml4fWdjYyIKICAgIGN4eCA9ICIke3Rvb2xwcmVmaXh9ZysrIgogIAogICAgcmVhZGVsZiA9ICIke3Rvb2xwcmVmaXh9cmVhZGVsZiIKICAgIG5tID0gIiR7dG9vbHByZWZpeH1ubSIKICAgIGFyID0gIiR7dG9vbHByZWZpeH1hciIKICAgIGxkID0gY3h4CiAgCiAgICB0b29sY2hhaW5fYXJncyA9IHsKICAgICAgY3VycmVudF9jcHUgPSAid2luIgogICAgICBjdXJyZW50X29zID0gIndpbiIKICAgICAgaXNfY2xhbmcgPSBmYWxzZQogICAgfQp9")) | Out-File -FilePath C:/v8/v8/tools/toolchain/BUILD.gn
+          [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String("Z2NjX3Rvb2xjaGFpbigibWluZ3c2NCIpIHsKICAgIHRvb2xwcmVmaXggPSAiQzovbWluZ3c2NC9iaW4vIgogIAogICAgY2MgPSAiJHt0b29scHJlZml4fWdjYyIKICAgIGN4eCA9ICIke3Rvb2xwcmVmaXh9ZysrIgogIAogICAgcmVhZGVsZiA9ICIke3Rvb2xwcmVmaXh9cmVhZGVsZiIKICAgIG5tID0gIiR7dG9vbHByZWZpeH1ubSIKICAgIGFyID0gIiR7dG9vbHByZWZpeH1hciIKICAgIGxkID0gY3h4CiAgCiAgICB0b29sY2hhaW5fYXJncyA9IHsKICAgICAgY3VycmVudF9jcHUgPSAid2luIgogICAgICBjdXJyZW50X29zID0gIndpbiIKICAgICAgaXNfY2xhbmcgPSBmYWxzZQogICAgfQp9")) | Out-File -Append -FilePath C:/v8/v8/tools/toolchain/BUILD.gn
           gn gen out/x64.Release --args='custom_toolchain=\"C:/v8/v8/tools/toolchain:mingw64\" v8_monolithic=true v8_use_external_startup_data=false use_custom_libcxx=false is_component_build=false treat_warnings_as_errors=false v8_symbol_level=0 is_debug=false target_cpu=\"x64\"'
           ninja -C out/x64.Release/ v8_monolith
       - name: Package Library
