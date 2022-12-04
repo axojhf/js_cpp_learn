@@ -20,23 +20,31 @@ jobs:
           (new-object System.Net.WebClient).DownloadFile('https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip','ninja-win.zip')
           7z x -aoa -oC:\ninja ninja-win.zip
           rm ninja-win.zip
-      - uses: msys2/setup-msys2@v2
-        with:
-          msystem: mingw64
-      - shell: msys2 {0}
+      # - uses: msys2/setup-msys2@v2
+      #   with:
+      #     msystem: mingw64
+      # - shell: msys2 {0}
+      #   run: |
+      #     pacman -S --noconfirm git ninja clang
+      #     export PATH="/c/depot_tools:/c/mingw64/bin:$PATH"
+      #     gclient
+      #     mkdir -p /c/v8
+      #     cd /c/v8
+      #     fetch v8
+      #     cd /c/v8/v8
+      #     gn gen out/x64.Release --args="v8_monolithic=true v8_use_external_startup_data=false use_custom_libcxx=false is_component_build=false treat_warnings_as_errors=false v8_symbol_level=0 is_debug=false target_cpu=\"x64\""
+      #     ninja -C out/x64.Release/ v8_monolith
+      - name: Build
         run: |
-          pacman -S --noconfirm git ninja clang
-          export PATH="/c/depot_tools:/c/mingw64/bin:$PATH"
-          gclient
-          mkdir -p /c/v8
-          cd /c/v8
-          fetch v8
-          cd /c/v8/v8
-          gn gen out/x64.Release --args="v8_monolithic=true v8_use_external_startup_data=false use_custom_libcxx=false is_component_build=false treat_warnings_as_errors=false v8_symbol_level=0 is_debug=false target_cpu=\"x64\""
-          ninja -C out/x64.Release/ v8_monolith
+          $Env:PATH = "C:\depot_tools;C:\mingw64\bin;C:\ninja;$Env:PATH"
+          cd C:/
+          git clone --depth=1 https://github.com/bnoordhuis/v8-cmake.git
+          cd v8-cmake
+          cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DV8_MONOLITHIC=ON -DV8_USE_EXTERNAL_STARTUP_DATA=OFF -DV8_USE_CUSTOM_LIBCXX=OFF -DV8_TREAT_WARNINGS_AS_ERRORS=OFF -DV8_SYMBOL_LEVEL=0 -DV8_TARGET_ARCH=x64
       - name: Package Library
         run: |
-          7z a v8_monolith_MinGW_x64_release.7z C:\v8\v8\out\x64.Release\
+          7z a v8_monolith_MinGW_x64_release.7z C:\v8-cmake\build\
+          # 7z a v8_monolith_MinGW_x64_release.7z C:\v8\v8\out\x64.Release\
           # rm -r -Force C:\v8\v8\out\x64.Release\obj
           # rm -r -Force C:\v8\v8\out\x64.Release\gen
           # Get-ChildItem -Path C:\v8\v8\out\x64.Release -Filter *.pdb -Recurse | Remove-Item -Force
