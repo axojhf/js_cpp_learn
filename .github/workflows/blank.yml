@@ -101,10 +101,10 @@ jobs:
           ninja -C out/x64.Release/ v8
       - name: Package Library
         run: |
-          # rm -r -Force C:\v8\v8\out\x64.Release\obj
+          rm -r -Force C:\v8\v8\out\x64.Release\obj
           rm -r -Force C:\v8\v8\out\x64.Release\gen
           Get-ChildItem -Path C:\v8\v8\out\x64.Release -Filter *.pdb -Recurse | Remove-Item -Force
-          7z a v8_monolith_x64_release.7z C:\v8\v8\include C:\v8\v8\out\x64.Release\obj\v8_monolith.lib
+          7z a v8_monolith_x64_release.7z C:\v8\v8\out\x64.Release
       - uses: actions/upload-artifact@v3
         with:
           name: v8_monolith_x64_release
