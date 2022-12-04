@@ -5,43 +5,84 @@ on:
   pull_request:
     branches: [ "Test" ]
 jobs:
-  build:
-    name: Test
+  mingwBuild:
+    name: MinGW Build
     runs-on: windows-2019
     steps:
       - name: Set Env
         run: |
           (new-object System.Net.WebClient).DownloadFile('https://storage.googleapis.com/chrome-infra/depot_tools.zip','depot_tools.zip')
           7z x -aoa -oC:\depot_tools depot_tools.zip
-      - uses: ilammy/msvc-dev-cmd@v1
+          rm depot_tools.zip
+          (new-object System.Net.WebClient).DownloadFile('https://github.com/cristianadam/mingw-builds/releases/download/v11.2.0-rev3/x86_64-11.2.0-release-posix-seh-rt_v9-rev3.7z','mingw64.7z')
+          7z x -aoa -oC:\ mingw64.7z
+          rm mingw64.7z
+          (new-object System.Net.WebClient).DownloadFile('https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip','ninja-win.zip')
+          7z x -aoa -oC:\ninja ninja-win.zip
+          rm ninja-win.zip
+      - uses: msys2/setup-msys2@v2
         with:
-          arch: amd64
-          toolset: 14.2
-      - name: Build
+          msystem: mingw64
+      - shell: msys2 {0}
         run: |
-          $Env:PATH = "C:\depot_tools;$Env:PATH"
-          $Env:DEPOT_TOOLS_WIN_TOOLCHAIN = 0
+          pacman -S --noconfirm git ninja clang
+          export PATH="/c/depot_tools:/c/mingw64/bin:$PATH"
           gclient
-          mkdir C:\v8
-          cd C:\v8
+          mkdir -p /c/v8
+          cd /c/v8
           fetch v8
-          cd v8
-          gn gen out/x64.Release --args='is_component_build=false v8_static_library=true use_custom_libcxx=false target_cpu=\"x64\"'
-          # gn gen out/x64.Release --args="v8_monolithic=true v8_use_external_startup_data=false v8_static_library=true is_debug=false target_cpu=\`"x64\`""
-          ninja -C out/x64.Release
+          cd /c/v8/v8
+          gn gen out/x64.Release --args="v8_monolithic=true v8_use_external_startup_data=false use_custom_libcxx=false is_component_build=false treat_warnings_as_errors=false v8_symbol_level=0 is_debug=false target_cpu=\"x64\""
+          ninja -C out/x64.Release/ v8_monolith
       - name: Package Library
         run: |
-          #当C:\v8\v8\out\x64.Release\obj存在时，删除C:\v8\v8\out\x64.Release\obj
-          # if (Test-Path C:\v8\v8\out\x64.Release\obj) {
-          #   rm -r -Force C:\v8\v8\out\x64.Release\obj
-          # }
-          # if (Test-Path C:\v8\v8\out\x64.Release\gen) {
-          #   rm -r -Force C:\v8\v8\out\x64.Release\gen
-          # }
-          Get-ChildItem -Path C:\v8\v8\out\x64.Release -Filter *.pdb -Recurse | Remove-Item -Force
-          7z a v8_x64_release.7z C:\v8\v8\out\x64.Release\
+          7z a v8_monolith_MinGW_x64_release.7z C:\v8\v8\out\x64.Release\
+          # rm -r -Force C:\v8\v8\out\x64.Release\obj
+          # rm -r -Force C:\v8\v8\out\x64.Release\gen
+          # Get-ChildItem -Path C:\v8\v8\out\x64.Release -Filter *.pdb -Recurse | Remove-Item -Force
+          # 使用7z压缩C:\v8\v8\include文件夹和C:\v8\v8\out\x64.Release\obj\v8_monolith.lib文件
+          # 7z a v8_monolith_x64_release.7z C:\v8\v8\include C:\v8\v8\out\x64.Release\obj\v8_monolith.lib
       - uses: actions/upload-artifact@v3
         with:
-          name: v8_x64_release_test
-          path: v8_x64_release.7z
+          name: v8_monolith_MinGW_x64_release
+          path: v8_monolith_MinGW_x64_release.7z
+  # build:
+  #   name: Test
+  #   runs-on: windows-2019
+  #   steps:
+  #     - name: Set Env
+  #       run: |
+  #         (new-object System.Net.WebClient).DownloadFile('https://storage.googleapis.com/chrome-infra/depot_tools.zip','depot_tools.zip')
+  #         7z x -aoa -oC:\depot_tools depot_tools.zip
+  #     - uses: ilammy/msvc-dev-cmd@v1
+  #       with:
+  #         arch: amd64
+  #         toolset: 14.2
+  #     - name: Build
+  #       run: |
+  #         $Env:PATH = "C:\depot_tools;$Env:PATH"
+  #         $Env:DEPOT_TOOLS_WIN_TOOLCHAIN = 0
+  #         gclient
+  #         mkdir C:\v8
+  #         cd C:\v8
+  #         fetch v8
+  #         cd v8
+  #         gn gen out/x64.Release --args='is_component_build=false v8_static_library=true use_custom_libcxx=false target_cpu=\"x64\"'
+  #         # gn gen out/x64.Release --args="v8_monolithic=true v8_use_external_startup_data=false v8_static_library=true is_debug=false target_cpu=\`"x64\`""
+  #         ninja -C out/x64.Release
+  #     - name: Package Library
+  #       run: |
+  #         #当C:\v8\v8\out\x64.Release\obj存在时，删除C:\v8\v8\out\x64.Release\obj
+  #         # if (Test-Path C:\v8\v8\out\x64.Release\obj) {
+  #         #   rm -r -Force C:\v8\v8\out\x64.Release\obj
+  #         # }
+  #         # if (Test-Path C:\v8\v8\out\x64.Release\gen) {
+  #         #   rm -r -Force C:\v8\v8\out\x64.Release\gen
+  #         # }
+  #         Get-ChildItem -Path C:\v8\v8\out\x64.Release -Filter *.pdb -Recurse | Remove-Item -Force
+  #         7z a v8_x64_release.7z C:\v8\v8\out\x64.Release\
+  #     - uses: actions/upload-artifact@v3
+  #       with:
+  #         name: v8_x64_release_test
+  #         path: v8_x64_release.7z
           
