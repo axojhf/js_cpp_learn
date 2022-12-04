@@ -28,7 +28,7 @@ jobs:
           cd v8
           ls
           gn gen out/x64.Release --args='v8_monolithic=true v8_use_external_startup_data=false use_custom_libcxx=false is_component_build=false treat_warnings_as_errors=false v8_symbol_level=0 is_debug=false target_cpu=\"x64\"'
-          ninja -C out/x64.Release/
+          ninja -C out/x64.Release/ v8_monolith
           ls out/x64.Release/
       - name: Package Library
         run: |
