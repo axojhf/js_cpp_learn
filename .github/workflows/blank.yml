@@ -7,26 +7,21 @@ on:
 jobs:
   build:
     name: V8 Test Build
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
       - name: Set Env
         run: |
           (new-object System.Net.WebClient).DownloadFile('https://storage.googleapis.com/chrome-infra/depot_tools.zip','depot_tools.zip')
           7z x -aoa -oC:\depot_tools depot_tools.zip
-      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: ilammy/msvc-dev-cmd@master
         with:
           arch: amd64
-          toolset: 14.2
+          toolset: 14.3
       - name: Build
         run: |
           $Env:PATH = "C:\depot_tools;$Env:PATH"
           $Env:DEPOT_TOOLS_WIN_TOOLCHAIN = 0
-          gclient
-          mkdir C:\v8
-          cd C:\v8
-          fetch v8
-          cd v8
-          ls
+          gclient ; mkdir C:\v8 ; cd C:\v8 ; fetch v8 ; cd v8 ; ls
           gn gen out/x64.Release --args='v8_use_external_startup_data=false use_custom_libcxx=false is_component_build=false treat_warnings_as_errors=false v8_symbol_level=0 is_debug=false target_cpu=\"x64\"'
           ninja -C out/x64.Release/ v8
           ls out/x64.Release/
@@ -43,25 +38,21 @@ jobs:
 
   monolith_build:
     name: V8 monolith Build
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
       - name: Set Env
         run: |
           (new-object System.Net.WebClient).DownloadFile('https://storage.googleapis.com/chrome-infra/depot_tools.zip','depot_tools.zip')
           7z x -aoa -oC:\depot_tools depot_tools.zip
-      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: ilammy/msvc-dev-cmd@master
         with:
           arch: amd64
-          toolset: 14.2
+          toolset: 14.3
       - name: Build
         run: |
           $Env:PATH = "C:\depot_tools;$Env:PATH"
           $Env:DEPOT_TOOLS_WIN_TOOLCHAIN = 0
-          gclient
-          mkdir C:\v8
-          cd C:\v8
-          fetch v8
-          cd v8
+          gclient ; mkdir C:\v8 ; cd C:\v8 ; fetch v8 ; cd v8 ; ls
           gn gen out/x64.Release --args='v8_monolithic=true v8_use_external_startup_data=false use_custom_libcxx=false is_component_build=false treat_warnings_as_errors=false v8_symbol_level=0 is_debug=false target_cpu=\"x64\"'
           ninja -C out/x64.Release/ v8_monolith
       - name: Package Library
@@ -84,20 +75,16 @@ jobs:
         run: |
           (new-object System.Net.WebClient).DownloadFile('https://storage.googleapis.com/chrome-infra/depot_tools.zip','depot_tools.zip')
           7z x -aoa -oC:\depot_tools depot_tools.zip
-      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: ilammy/msvc-dev-cmd@master
         with:
           arch: amd64
-          toolset: 14.2
+          toolset: 14.3
       - name: Build
         run: |
           $Env:PATH = "C:\depot_tools;$Env:PATH"
           $Env:DEPOT_TOOLS_WIN_TOOLCHAIN = 0
-          gclient
-          mkdir C:\v8
-          cd C:\v8
-          fetch v8
-          cd v8
-          gn gen out/x64.Release --args='is_component_build = true v8_symbol_level=0 is_debug=false target_cpu=\"x64\"'
+          gclient ; mkdir C:\v8 ; cd C:\v8 ; fetch v8 ; cd v8 ; ls
+          gn gen out/x64.Release --args='is_component_build=true v8_symbol_level=0 is_debug=false target_cpu=\"x64\"'
           ninja -C out/x64.Release/ v8
       - name: Package Library
         run: |
