@@ -69,7 +69,7 @@ jobs:
   
   V8_dll_build:
     name: V8 DLL Build
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
       - name: Set Env
         run: |
@@ -95,4 +95,34 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: v8_dll_x64_release
+          path: v8_dll_x64_release.7z
+
+  V8_dll_custom_build:
+    name: V8 DLL Custom Build
+    runs-on: windows-latest
+    steps:
+      - name: Set Env
+        run: |
+          (new-object System.Net.WebClient).DownloadFile('https://storage.googleapis.com/chrome-infra/depot_tools.zip','depot_tools.zip')
+          7z x -aoa -oC:\depot_tools depot_tools.zip
+      - uses: ilammy/msvc-dev-cmd@master
+        with:
+          arch: amd64
+          toolset: 14.3
+      - name: Build No Wasm
+        run: |
+          $Env:PATH = "C:\depot_tools;$Env:PATH"
+          $Env:DEPOT_TOOLS_WIN_TOOLCHAIN = 0
+          gclient ; mkdir C:\v8 ; cd C:\v8 ; fetch v8 ; cd v8 ; ls
+          gn gen out/x64.Release --args='is_component_build=true v8_enable_webassembly=false v8_symbol_level=0 is_debug=false target_cpu=\"x64\"'
+          ninja -C out/x64.Release/ v8
+      - name: Package Library
+        run: |
+          rm -r -Force C:\v8\v8\out\x64.Release\obj
+          rm -r -Force C:\v8\v8\out\x64.Release\gen
+          Get-ChildItem -Path C:\v8\v8\out\x64.Release -Filter *.pdb -Recurse | Remove-Item -Force
+          7z a v8_dll_x64_release.7z C:\v8\v8\out\x64.Release
+      - uses: actions/upload-artifact@v3
+        with:
+          name: v8_dll_x64_release_custom
           path: v8_dll_x64_release.7z
